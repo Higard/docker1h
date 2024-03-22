@@ -1,0 +1,19 @@
+touch Dockerfile
+#In Dockerfile
+{
+FROM ubuntu:latest
+RUN apt-get update && apt-get install -y nginx
+CMD ["nginx", "-g", "daemon off;"]
+}
+
+docker build -t my-nginx .
+docker run -d --name my-nginx-container -p 8080:80 my-nginx
+docker network create MyNetwork
+docker run -it --name my-ubuntu-container --network MyNetwork ubuntu
+docker network connect MyNetwork my-nginx-container
+
+winpty docker exec -it my-ubuntu-container bash
+#In Ubuntu Container
+apt-get update
+apt-get install -y curl
+curl <my-nginx-container`s ip address>
